@@ -65,3 +65,10 @@ class PredictionResult(BaseModel):
     evidence: list[str] = Field(default_factory=list)
     feature_attribution: dict[str, float] = Field(default_factory=dict)
 
+
+def normalize_drug_name(value: str) -> str:
+    return value.strip().lower().replace(" ", "_")
+
+
+def canonical_pair_key(drug_a: str, drug_b: str) -> tuple[str, str]:
+    return tuple(sorted((normalize_drug_name(drug_a), normalize_drug_name(drug_b))))
