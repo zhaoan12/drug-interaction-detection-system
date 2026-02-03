@@ -36,3 +36,26 @@ def test_http_api_predict_endpoint(settings):
     assert response.status == 200
     assert payload["interaction_label"]
 
+
+def test_http_api_rejects_invalid_predict_request(settings):
+    bundle = prepare_dataset(settings)
+    artifacts = train_models(settings, bundle)
+    engine = InferenceEngine(settings, artifacts=artifacts)
+    metrics = ServiceMetrics()
+    server = ThreadingHTTPServer(("127.0.0.1", 0), create_handler(settings, engine, metrics))
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    time.sleep(0.1)
+    conn = client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+    conn.request(
+        "POST",
+        "/predict",
+        body=json.dumps({"drug_a": "warfarin"}),
+        headers={"Content-Type": "application/json"},
+    )
+    response = conn.getresponse()
+    payload = json.loads(response.read().decode("utf-8"))
+    server.shutdown()
+    thread.join(timeout=2)
+    assert response.status == 400
+    assert payload["error"] == "invalid request"

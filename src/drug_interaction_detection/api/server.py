@@ -5,9 +5,17 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import time
 
+from pydantic import BaseModel, ValidationError
+
 from drug_interaction_detection.config.settings import ResolvedSettings
 from drug_interaction_detection.inference.service import InferenceEngine
 from drug_interaction_detection.monitoring.metrics import ServiceMetrics
+
+
+class PredictionRequest(BaseModel):
+    drug_a: str
+    drug_b: str
+    pair_id: str = "api-request"
 
 
 def create_handler(settings: ResolvedSettings, engine: InferenceEngine, metrics: ServiceMetrics) -> type[BaseHTTPRequestHandler]:
@@ -40,9 +48,13 @@ def create_handler(settings: ResolvedSettings, engine: InferenceEngine, metrics:
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length).decode("utf-8"))
-                result = engine.predict(payload["drug_a"], payload["drug_b"], payload.get("pair_id", "api-request"))
+                request = PredictionRequest.model_validate(payload)
+                result = engine.predict(request.drug_a, request.drug_b, request.pair_id)
                 metrics.observe(result.interaction_label, started_at, ok=True)
                 self._send_json(result.model_dump(mode="json"))
+            except ValidationError as exc:
+                metrics.observe("error", started_at, ok=False)
+                self._send_json({"error": "invalid request", "details": exc.errors()}, status=HTTPStatus.BAD_REQUEST)
             except Exception as exc:
                 metrics.observe("error", started_at, ok=False)
                 self._send_json({"error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
@@ -56,4 +68,3 @@ def run_server(settings: ResolvedSettings) -> None:
     handler = create_handler(settings, engine, metrics)
     server = ThreadingHTTPServer((settings.settings.service.host, settings.settings.service.port), handler)
     server.serve_forever()
-
