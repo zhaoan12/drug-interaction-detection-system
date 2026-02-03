@@ -8,6 +8,8 @@ def test_train_models_produces_serialized_artifacts(settings):
     artifacts = train_models(settings, bundle)
     assert artifacts.interaction_model.labels
     assert (settings.artifacts_dir / "model_reference.json").exists()
+    assert artifacts.training_summary["train_examples"] >= 1
+    assert artifacts.training_summary["feature_vocabulary_size"] >= 1
 
 
 def test_pair_features_include_reference_overlap_signals(settings):

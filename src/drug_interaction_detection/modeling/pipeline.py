@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from statistics import mean
 
 from drug_interaction_detection.config.settings import ResolvedSettings
 from drug_interaction_detection.data.dataset import DatasetBundle
@@ -17,6 +18,7 @@ class ArtifactBundle:
     interaction_baseline: MajorityClassifier
     severity_baseline: MajorityClassifier
     feature_mode: str
+    training_summary: dict[str, object]
 
 
 def _vectorize(bundle: DatasetBundle, include_reference: bool) -> list[tuple[FeatureVector, str, str, str]]:
@@ -64,14 +66,35 @@ def train_models(settings: ResolvedSettings, bundle: DatasetBundle, include_refe
         interaction_baseline=interaction_baseline,
         severity_baseline=severity_baseline,
         feature_mode="reference" if include_reference else "structure_only",
+        training_summary=_summarize_training_rows(train_rows),
     )
     save_artifacts(settings, artifacts)
     return artifacts
 
 
+def _summarize_training_rows(train_rows: list[tuple[FeatureVector, str, str]]) -> dict[str, object]:
+    interaction_counts: dict[str, int] = {}
+    severity_counts: dict[str, int] = {}
+    unique_features: set[str] = set()
+    feature_counts: list[int] = []
+    for features, interaction, severity in train_rows:
+        interaction_counts[interaction] = interaction_counts.get(interaction, 0) + 1
+        severity_counts[severity] = severity_counts.get(severity, 0) + 1
+        unique_features.update(features)
+        feature_counts.append(len(features))
+    return {
+        "train_examples": len(train_rows),
+        "feature_vocabulary_size": len(unique_features),
+        "average_features_per_example": round(mean(feature_counts), 3) if feature_counts else 0.0,
+        "interaction_label_counts": dict(sorted(interaction_counts.items())),
+        "severity_label_counts": dict(sorted(severity_counts.items())),
+    }
+
+
 def save_artifacts(settings: ResolvedSettings, bundle: ArtifactBundle) -> None:
     payload = {
         "feature_mode": bundle.feature_mode,
+        "training_summary": bundle.training_summary,
         "interaction_model": {
             "labels": bundle.interaction_model.labels,
             "weights": bundle.interaction_model.weights,
@@ -115,4 +138,5 @@ def load_artifacts(path: str | None, settings: ResolvedSettings) -> ArtifactBund
         interaction_baseline=interaction_baseline,
         severity_baseline=severity_baseline,
         feature_mode=payload["feature_mode"],
+        training_summary=payload.get("training_summary", {}),
     )
