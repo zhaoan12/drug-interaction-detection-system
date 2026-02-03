@@ -64,6 +64,9 @@ class PredictionResult(BaseModel):
     severity_confidence: float
     evidence: list[str] = Field(default_factory=list)
     feature_attribution: dict[str, float] = Field(default_factory=dict)
+    interaction_probabilities: dict[str, float] = Field(default_factory=dict)
+    severity_probabilities: dict[str, float] = Field(default_factory=dict)
+    risk_summary: str = ""
 
 
 def normalize_drug_name(value: str) -> str:

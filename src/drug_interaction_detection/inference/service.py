@@ -28,8 +28,12 @@ class InferenceEngine:
             evidence=evidence,
         )
         features = pair_features(example, include_reference=self.artifacts.feature_mode == "reference")
-        interaction_label, interaction_confidence = self.artifacts.interaction_model.predict(features)
-        severity_label, severity_confidence = self.artifacts.severity_model.predict(features)
+        interaction_probabilities = self.artifacts.interaction_model.probabilities(features)
+        severity_probabilities = self.artifacts.severity_model.probabilities(features)
+        interaction_label = max(interaction_probabilities, key=interaction_probabilities.get)
+        severity_label = max(severity_probabilities, key=severity_probabilities.get)
+        interaction_confidence = interaction_probabilities[interaction_label]
+        severity_confidence = severity_probabilities[severity_label]
         attributions = top_feature_attribution(self.artifacts.interaction_model.weights[interaction_label], features)
         return PredictionResult(
             pair_id=pair_id,
@@ -41,9 +45,18 @@ class InferenceEngine:
             severity_confidence=round(severity_confidence, 5),
             evidence=evidence,
             feature_attribution=attributions,
+            interaction_probabilities=self._rounded_distribution(interaction_probabilities),
+            severity_probabilities=self._rounded_distribution(severity_probabilities),
+            risk_summary=self._risk_summary(interaction_label, severity_label, evidence),
         )
 
     def _build_evidence(self, warnings_a: list[str], warnings_b: list[str]) -> list[str]:
         merged = warnings_a[:2] + warnings_b[:2]
         return merged[: self.settings.settings.inference.max_evidence_items]
 
+    def _rounded_distribution(self, probabilities: dict[str, float]) -> dict[str, float]:
+        return {label: round(value, 5) for label, value in sorted(probabilities.items())}
+
+    def _risk_summary(self, interaction_label: str, severity: str, evidence: list[str]) -> str:
+        evidence_clause = evidence[0] if evidence else "no warning evidence available"
+        return f"{interaction_label} risk with {severity} severity; leading evidence: {evidence_clause}"

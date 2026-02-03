@@ -11,4 +11,6 @@ def test_inference_returns_prediction_payload(settings):
     assert result.interaction_label
     assert result.severity
     assert result.evidence
-
+    assert result.interaction_probabilities[result.interaction_label] == result.interaction_confidence
+    assert result.severity_probabilities[result.severity] == result.severity_confidence
+    assert "leading evidence" in result.risk_summary
