@@ -9,4 +9,5 @@ def test_evaluation_generates_report(settings):
     result = evaluate_bundle(settings, bundle, artifacts, split="test")
     report = render_markdown_report(result)
     assert "Evaluation Report" in report
-
+    assert result.interaction_per_label
+    assert "Per-Label Quality" in report

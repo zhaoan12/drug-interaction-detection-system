@@ -35,3 +35,21 @@ def confusion(gold: list[str], predicted: list[str]) -> dict[str, dict[str, int]
         matrix[expected][actual] += 1
     return {label: dict(counts) for label, counts in matrix.items()}
 
+
+def per_label_report(gold: list[str], predicted: list[str]) -> dict[str, dict[str, float]]:
+    labels = sorted(set(gold) | set(predicted))
+    report: dict[str, dict[str, float]] = {}
+    for label in labels:
+        tp = sum(1 for g, p in zip(gold, predicted) if g == label and p == label)
+        fp = sum(1 for g, p in zip(gold, predicted) if g != label and p == label)
+        fn = sum(1 for g, p in zip(gold, predicted) if g == label and p != label)
+        precision = tp / (tp + fp) if tp + fp else 0.0
+        recall = tp / (tp + fn) if tp + fn else 0.0
+        f1 = (2 * precision * recall) / (precision + recall) if precision + recall else 0.0
+        report[label] = {
+            "precision": round(precision, 3),
+            "recall": round(recall, 3),
+            "f1": round(f1, 3),
+            "support": float(sum(1 for item in gold if item == label)),
+        }
+    return report

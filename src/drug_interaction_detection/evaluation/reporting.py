@@ -4,7 +4,7 @@ from dataclasses import asdict, dataclass
 
 from drug_interaction_detection.config.settings import ResolvedSettings
 from drug_interaction_detection.data.dataset import DatasetBundle
-from drug_interaction_detection.evaluation.metrics import accuracy, confusion, macro_f1
+from drug_interaction_detection.evaluation.metrics import accuracy, confusion, macro_f1, per_label_report
 from drug_interaction_detection.features.extractors import pair_features
 from drug_interaction_detection.modeling.pipeline import ArtifactBundle
 from drug_interaction_detection.utils.io import write_json
@@ -22,6 +22,8 @@ class EvaluationResult:
     feature_mode: str
     interaction_confusion: dict[str, dict[str, int]]
     severity_confusion: dict[str, dict[str, int]]
+    interaction_per_label: dict[str, dict[str, float]]
+    severity_per_label: dict[str, dict[str, float]]
 
 
 def evaluate_bundle(
@@ -57,6 +59,8 @@ def evaluate_bundle(
         feature_mode=artifacts.feature_mode,
         interaction_confusion=confusion(interaction_gold, interaction_predictions),
         severity_confusion=confusion(severity_gold, severity_predictions),
+        interaction_per_label=per_label_report(interaction_gold, interaction_predictions),
+        severity_per_label=per_label_report(severity_gold, severity_predictions),
     )
     write_json(settings.reports_dir / f"evaluation_{artifacts.feature_mode}_{split}.json", asdict(result))
     return result
@@ -78,6 +82,11 @@ def render_markdown_report(result: EvaluationResult, ablation: EvaluationResult 
         "",
         f"- interaction: `{result.interaction_confusion}`",
         f"- severity: `{result.severity_confusion}`",
+        "",
+        "## Per-Label Quality",
+        "",
+        f"- interaction: `{result.interaction_per_label}`",
+        f"- severity: `{result.severity_per_label}`",
     ]
     if ablation is not None:
         lines.extend(
@@ -90,4 +99,3 @@ def render_markdown_report(result: EvaluationResult, ablation: EvaluationResult 
             ]
         )
     return "\n".join(lines)
-
