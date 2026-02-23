@@ -1,0 +1,13 @@
+[
+  {
+    "pair_id": "example-001",
+    "drug_a": "warfarin",
+    "drug_b": "ibuprofen"
+  },
+  {
+    "pair_id": "example-002",
+    "drug_a": "sertraline",
+    "drug_b": "tramadol"
+  }
+]
+
