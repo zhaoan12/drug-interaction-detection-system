@@ -1,0 +1,13 @@
+{
+  "contraindications": ["acute intoxication with sedatives"],
+  "drug_class": "opioid_analgesic",
+  "drug_id": "db0004",
+  "enzymes": ["cyp2d6", "cyp3a4"],
+  "generic_name": "tramadol",
+  "indications": ["pain"],
+  "mechanisms": ["mu_opioid_agonism", "serotonin_norepinephrine_reuptake_inhibition"],
+  "normalized_names": ["tramadol"],
+  "transporters": [],
+  "warnings": ["serotonin syndrome", "seizure threshold reduction"]
+}
+

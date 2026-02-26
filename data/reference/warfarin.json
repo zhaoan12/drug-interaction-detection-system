@@ -1,0 +1,13 @@
+{
+  "contraindications": ["active bleeding", "recent hemorrhagic stroke"],
+  "drug_class": "vitamin_k_antagonist",
+  "drug_id": "db0001",
+  "enzymes": ["cyp2c9"],
+  "generic_name": "warfarin",
+  "indications": ["venous thromboembolism", "atrial fibrillation"],
+  "mechanisms": ["anticoagulation"],
+  "normalized_names": ["warfarin"],
+  "transporters": [],
+  "warnings": ["major bleeding risk", "narrow therapeutic index"]
+}
+

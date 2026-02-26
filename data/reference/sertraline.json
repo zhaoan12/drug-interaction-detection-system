@@ -1,0 +1,13 @@
+{
+  "contraindications": ["concurrent maoi therapy"],
+  "drug_class": "ssri",
+  "drug_id": "db0003",
+  "enzymes": ["cyp2c19", "cyp2d6"],
+  "generic_name": "sertraline",
+  "indications": ["depression", "anxiety"],
+  "mechanisms": ["serotonin_reuptake_inhibition"],
+  "normalized_names": ["sertraline"],
+  "transporters": ["sert"],
+  "warnings": ["serotonin syndrome", "qt interval effects at high doses"]
+}
+

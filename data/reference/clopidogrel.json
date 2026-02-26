@@ -1,0 +1,13 @@
+{
+  "contraindications": ["active bleeding"],
+  "drug_class": "antiplatelet",
+  "drug_id": "db0008",
+  "enzymes": ["cyp2c19"],
+  "generic_name": "clopidogrel",
+  "indications": ["acute coronary syndrome"],
+  "mechanisms": ["platelet_p2y12_inhibition"],
+  "normalized_names": ["clopidogrel"],
+  "transporters": [],
+  "warnings": ["bleeding risk", "requires activation by cyp2c19"]
+}
+

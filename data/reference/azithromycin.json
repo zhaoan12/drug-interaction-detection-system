@@ -1,0 +1,13 @@
+{
+  "contraindications": [],
+  "drug_class": "macrolide_antibiotic",
+  "drug_id": "db0006",
+  "enzymes": ["cyp3a4"],
+  "generic_name": "azithromycin",
+  "indications": ["respiratory infection"],
+  "mechanisms": ["ribosomal_inhibition"],
+  "normalized_names": ["azithromycin"],
+  "transporters": ["p_gp"],
+  "warnings": ["qt prolongation", "arrhythmia risk"]
+}
+

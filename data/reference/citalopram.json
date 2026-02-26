@@ -1,0 +1,13 @@
+{
+  "contraindications": ["concurrent pimozide use"],
+  "drug_class": "ssri",
+  "drug_id": "db0005",
+  "enzymes": ["cyp2c19", "cyp3a4"],
+  "generic_name": "citalopram",
+  "indications": ["depression"],
+  "mechanisms": ["serotonin_reuptake_inhibition"],
+  "normalized_names": ["citalopram"],
+  "transporters": ["sert"],
+  "warnings": ["qt prolongation", "serotonin syndrome"]
+}
+

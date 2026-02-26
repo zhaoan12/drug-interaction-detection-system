@@ -1,0 +1,13 @@
+{
+  "contraindications": ["active gastrointestinal bleeding"],
+  "drug_class": "nsaid",
+  "drug_id": "db0002",
+  "enzymes": ["cyp2c9"],
+  "generic_name": "ibuprofen",
+  "indications": ["pain", "inflammation"],
+  "mechanisms": ["cox_inhibition", "platelet_aggregation_reduction"],
+  "normalized_names": ["ibuprofen"],
+  "transporters": [],
+  "warnings": ["gastrointestinal bleeding", "renal injury"]
+}
+

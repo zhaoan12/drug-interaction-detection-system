@@ -1,0 +1,13 @@
+{
+  "contraindications": ["severe renal failure"],
+  "drug_class": "biguanide",
+  "drug_id": "db0010",
+  "enzymes": [],
+  "generic_name": "metformin",
+  "indications": ["type_2_diabetes"],
+  "mechanisms": ["hepatic_glucose_suppression"],
+  "normalized_names": ["metformin"],
+  "transporters": ["oct1"],
+  "warnings": ["lactic acidosis in renal dysfunction"]
+}
+

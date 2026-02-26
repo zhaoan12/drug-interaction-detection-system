@@ -1,0 +1,13 @@
+{
+  "contraindications": [],
+  "drug_class": "calcium_channel_blocker",
+  "drug_id": "db0012",
+  "enzymes": ["cyp3a4"],
+  "generic_name": "amlodipine",
+  "indications": ["hypertension"],
+  "mechanisms": ["vascular_smooth_muscle_relaxation"],
+  "normalized_names": ["amlodipine"],
+  "transporters": [],
+  "warnings": ["hypotension", "edema"]
+}
+

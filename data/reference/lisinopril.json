@@ -1,0 +1,13 @@
+{
+  "contraindications": ["pregnancy"],
+  "drug_class": "ace_inhibitor",
+  "drug_id": "db0011",
+  "enzymes": [],
+  "generic_name": "lisinopril",
+  "indications": ["hypertension", "heart failure"],
+  "mechanisms": ["ace_inhibition"],
+  "normalized_names": ["lisinopril"],
+  "transporters": [],
+  "warnings": ["hyperkalemia", "hypotension"]
+}
+

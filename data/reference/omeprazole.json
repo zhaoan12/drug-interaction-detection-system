@@ -1,0 +1,13 @@
+{
+  "contraindications": [],
+  "drug_class": "proton_pump_inhibitor",
+  "drug_id": "db0009",
+  "enzymes": ["cyp2c19"],
+  "generic_name": "omeprazole",
+  "indications": ["gastroesophageal reflux"],
+  "mechanisms": ["acid_suppression"],
+  "normalized_names": ["omeprazole"],
+  "transporters": [],
+  "warnings": ["cyp2c19 inhibition"]
+}
+
