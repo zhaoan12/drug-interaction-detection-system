@@ -11,3 +11,5 @@ def test_evaluation_generates_report(settings):
     assert "Evaluation Report" in report
     assert result.interaction_per_label
     assert "Per-Label Quality" in report
+    assert result.interaction_errors is not None
+    assert "Example Errors" in report

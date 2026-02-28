@@ -24,6 +24,8 @@ class EvaluationResult:
     severity_confusion: dict[str, dict[str, int]]
     interaction_per_label: dict[str, dict[str, float]]
     severity_per_label: dict[str, dict[str, float]]
+    interaction_errors: list[dict[str, str]]
+    severity_errors: list[dict[str, str]]
 
 
 def evaluate_bundle(
@@ -40,12 +42,34 @@ def evaluate_bundle(
     severity_predictions: list[str] = []
     interaction_baseline: list[str] = []
     severity_baseline: list[str] = []
+    interaction_errors: list[dict[str, str]] = []
+    severity_errors: list[dict[str, str]] = []
     for example in examples:
         features = pair_features(example, include_reference=artifacts.feature_mode == "reference")
         interaction_label, _ = artifacts.interaction_model.predict(features)
         severity_label, _ = artifacts.severity_model.predict(features)
         interaction_predictions.append(interaction_label)
         severity_predictions.append(severity_label)
+        if interaction_label != example.interaction_label:
+            interaction_errors.append(
+                {
+                    "pair_id": example.pair_id,
+                    "drug_a": example.drug_a.generic_name,
+                    "drug_b": example.drug_b.generic_name,
+                    "gold": example.interaction_label,
+                    "predicted": interaction_label,
+                }
+            )
+        if severity_label != example.severity:
+            severity_errors.append(
+                {
+                    "pair_id": example.pair_id,
+                    "drug_a": example.drug_a.generic_name,
+                    "drug_b": example.drug_b.generic_name,
+                    "gold": example.severity,
+                    "predicted": severity_label,
+                }
+            )
         interaction_baseline.append(artifacts.interaction_baseline.predict())
         severity_baseline.append(artifacts.severity_baseline.predict())
     result = EvaluationResult(
@@ -61,6 +85,8 @@ def evaluate_bundle(
         severity_confusion=confusion(severity_gold, severity_predictions),
         interaction_per_label=per_label_report(interaction_gold, interaction_predictions),
         severity_per_label=per_label_report(severity_gold, severity_predictions),
+        interaction_errors=interaction_errors[:5],
+        severity_errors=severity_errors[:5],
     )
     write_json(settings.reports_dir / f"evaluation_{artifacts.feature_mode}_{split}.json", asdict(result))
     return result
@@ -87,6 +113,11 @@ def render_markdown_report(result: EvaluationResult, ablation: EvaluationResult 
         "",
         f"- interaction: `{result.interaction_per_label}`",
         f"- severity: `{result.severity_per_label}`",
+        "",
+        "## Example Errors",
+        "",
+        f"- interaction: `{result.interaction_errors}`",
+        f"- severity: `{result.severity_errors}`",
     ]
     if ablation is not None:
         lines.extend(
