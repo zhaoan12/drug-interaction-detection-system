@@ -67,6 +67,7 @@ class PredictionResult(BaseModel):
     interaction_probabilities: dict[str, float] = Field(default_factory=dict)
     severity_probabilities: dict[str, float] = Field(default_factory=dict)
     risk_summary: str = ""
+    low_confidence: bool = False
 
 
 def normalize_drug_name(value: str) -> str:

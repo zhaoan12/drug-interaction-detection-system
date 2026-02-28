@@ -28,8 +28,8 @@ class InferenceEngine:
             evidence=evidence,
         )
         features = pair_features(example, include_reference=self.artifacts.feature_mode == "reference")
-        interaction_probabilities = self.artifacts.interaction_model.probabilities(features)
-        severity_probabilities = self.artifacts.severity_model.probabilities(features)
+        interaction_probabilities = self._apply_probability_floor(self.artifacts.interaction_model.probabilities(features))
+        severity_probabilities = self._apply_probability_floor(self.artifacts.severity_model.probabilities(features))
         interaction_label = max(interaction_probabilities, key=interaction_probabilities.get)
         severity_label = max(severity_probabilities, key=severity_probabilities.get)
         interaction_confidence = interaction_probabilities[interaction_label]
@@ -48,6 +48,7 @@ class InferenceEngine:
             interaction_probabilities=self._rounded_distribution(interaction_probabilities),
             severity_probabilities=self._rounded_distribution(severity_probabilities),
             risk_summary=self._risk_summary(interaction_label, severity_label, evidence),
+            low_confidence=interaction_confidence < 0.5,
         )
 
     def _build_evidence(self, warnings_a: list[str], warnings_b: list[str]) -> list[str]:
@@ -56,6 +57,12 @@ class InferenceEngine:
 
     def _rounded_distribution(self, probabilities: dict[str, float]) -> dict[str, float]:
         return {label: round(value, 5) for label, value in sorted(probabilities.items())}
+
+    def _apply_probability_floor(self, probabilities: dict[str, float]) -> dict[str, float]:
+        floor = self.settings.settings.inference.probability_floor
+        adjusted = {label: max(value, floor) for label, value in probabilities.items()}
+        total = sum(adjusted.values()) or 1.0
+        return {label: value / total for label, value in adjusted.items()}
 
     def _risk_summary(self, interaction_label: str, severity: str, evidence: list[str]) -> str:
         evidence_clause = evidence[0] if evidence else "no warning evidence available"
