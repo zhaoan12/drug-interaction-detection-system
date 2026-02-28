@@ -1,5 +1,12 @@
 # Experiments
 
+## Run Tracking
+
+Training, evaluation, and batch inference commands append JSONL records to
+`artifacts/tracking/runs.jsonl`. Each record captures the run name, timestamp,
+parameters, headline metrics, and emitted artifact paths so local experiments
+remain auditable without requiring an external tracking service.
+
 ## Baselines
 
 - interaction label majority classifier
@@ -21,4 +28,3 @@ The default evaluation command trains:
 - structure-only model without retrieved warnings/mechanisms/shared biochemical features
 
 This allows the report to quantify the value of retrieval-enriched metadata.
-

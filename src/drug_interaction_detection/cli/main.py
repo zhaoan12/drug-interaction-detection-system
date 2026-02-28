@@ -75,6 +75,21 @@ def main() -> None:
         report = render_markdown_report(result, ablation)
         report_path = settings.reports_dir / f"evaluation_{full.feature_mode}.md"
         report_path.write_text(report, encoding="utf-8")
+        record_run(
+            settings.tracking_dir / "runs.jsonl",
+            ExperimentRun(
+                run_name=make_run_name("evaluate"),
+                started_at=current_timestamp(),
+                params={"feature_mode": full.feature_mode, "split": "test"},
+                metrics={
+                    "interaction_accuracy": result.interaction_accuracy,
+                    "interaction_macro_f1": result.interaction_macro_f1,
+                    "severity_accuracy": result.severity_accuracy,
+                    "severity_macro_f1": result.severity_macro_f1,
+                },
+                artifacts={"report": str(report_path)},
+            ),
+        )
         return
     if args.command == "predict":
         engine = InferenceEngine(settings)
@@ -86,6 +101,16 @@ def main() -> None:
         requests = read_json(args.input)
         outputs = [engine.predict(item["drug_a"], item["drug_b"], item.get("pair_id", "batch")).model_dump(mode="json") for item in requests]
         write_jsonl(settings.root / args.output, outputs)
+        record_run(
+            settings.tracking_dir / "runs.jsonl",
+            ExperimentRun(
+                run_name=make_run_name("batch-predict"),
+                started_at=current_timestamp(),
+                params={"input": str(args.input), "num_requests": len(requests)},
+                metrics={"num_predictions": float(len(outputs))},
+                artifacts={"output": str(settings.root / args.output)},
+            ),
+        )
         return
     if args.command == "serve":
         if args.port is not None:
