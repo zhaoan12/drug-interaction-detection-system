@@ -16,8 +16,11 @@ Returns aggregate in-process metrics:
 
 - total requests
 - total errors
+- total low-confidence predictions
 - average latency in milliseconds
+- average interaction confidence
 - prediction counts by interaction label
+- request counts by route
 
 ### `POST /predict`
 

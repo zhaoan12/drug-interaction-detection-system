@@ -35,6 +35,7 @@ def test_http_api_predict_endpoint(settings):
     thread.join(timeout=2)
     assert response.status == 200
     assert payload["interaction_label"]
+    assert metrics.snapshot()["requests_by_route"]["/predict"] == 1
 
 
 def test_http_api_rejects_invalid_predict_request(settings):
@@ -91,3 +92,4 @@ def test_http_api_batch_predict_endpoint(settings):
     assert response.status == 200
     assert payload["count"] == 2
     assert len(payload["results"]) == 2
+    assert metrics.snapshot()["requests_by_route"]["/batch-predict"] == 2

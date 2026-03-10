@@ -55,21 +55,35 @@ def create_handler(settings: ResolvedSettings, engine: InferenceEngine, metrics:
                 if self.path == "/predict":
                     request = PredictionRequest.model_validate(payload)
                     result = engine.predict(request.drug_a, request.drug_b, request.pair_id)
-                    metrics.observe(result.interaction_label, started_at, ok=True)
+                    metrics.observe(
+                        result.interaction_label,
+                        started_at,
+                        route=self.path,
+                        ok=True,
+                        confidence=result.interaction_confidence,
+                        low_confidence=result.low_confidence,
+                    )
                     self._send_json(result.model_dump(mode="json"))
                     return
                 batch_request = BatchPredictionRequest.model_validate(payload)
                 results = []
                 for request in batch_request.requests:
                     result = engine.predict(request.drug_a, request.drug_b, request.pair_id)
-                    metrics.observe(result.interaction_label, started_at, ok=True)
+                    metrics.observe(
+                        result.interaction_label,
+                        started_at,
+                        route=self.path,
+                        ok=True,
+                        confidence=result.interaction_confidence,
+                        low_confidence=result.low_confidence,
+                    )
                     results.append(result.model_dump(mode="json"))
                 self._send_json({"results": results, "count": len(results)})
             except ValidationError as exc:
-                metrics.observe("error", started_at, ok=False)
+                metrics.observe("error", started_at, route=self.path, ok=False)
                 self._send_json({"error": "invalid request", "details": exc.errors()}, status=HTTPStatus.BAD_REQUEST)
             except Exception as exc:
-                metrics.observe("error", started_at, ok=False)
+                metrics.observe("error", started_at, route=self.path, ok=False)
                 self._send_json({"error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
 
     return Handler
