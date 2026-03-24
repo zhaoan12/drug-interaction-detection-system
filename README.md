@@ -51,7 +51,8 @@ real dataset and S3-compatible reference store.
 ## Documentation
 
 - [`docs/architecture.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/architecture.md)
+- [`docs/api.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/api.md)
 - [`docs/reproducibility.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/reproducibility.md)
 - [`docs/experiments.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/experiments.md)
+- [`docs/model_card.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/model_card.md)
 - [`docs/adr/0001-local-object-store-retrieval.md`](/C:/Users/ghost/Downloads/drug-interaction-detection-system/docs/adr/0001-local-object-store-retrieval.md)
-

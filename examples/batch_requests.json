@@ -1,0 +1,18 @@
+[
+  {
+    "pair_id": "batch-001",
+    "drug_a": "warfarin",
+    "drug_b": "fluconazole"
+  },
+  {
+    "pair_id": "batch-002",
+    "drug_a": "citalopram",
+    "drug_b": "azithromycin"
+  },
+  {
+    "pair_id": "batch-003",
+    "drug_a": "metformin",
+    "drug_b": "lisinopril"
+  }
+]
+
